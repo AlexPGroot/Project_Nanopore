@@ -1,0 +1,7 @@
+Contains exported conda environments for use with this workflow.
+
+conda create --name <env> --file <environment.txt>
+
+e.g.
+
+conda create --name nanopore --file nanopore.txt

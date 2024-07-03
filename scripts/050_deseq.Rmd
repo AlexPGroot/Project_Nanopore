@@ -1,0 +1,163 @@
+---
+title: "050_deseq"
+author: "Alex Groot"
+date: "2024-04-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(DESeq2)
+library(Rsubread)
+library(here)
+library(AnnotationDbi)
+library(org.Hs.eg.db)
+library(RColorBrewer)
+library(biomaRt)
+library(dplyr)
+```
+
+```{r replicate}
+# se <- readRDS(here("results/bambu/example_bambu_se.rds"))
+
+se_col_data <- colData(se)
+# add "treatment" column as identifier for DESeq design
+# check colData(se) to see in what order you need to add the treatment identifier
+se_col_data$treatment <- c("HepG2", "MCF7", "HepG2", "MCF7") 
+
+colData(se) <- se_col_data
+
+#dds <- DESeqDataSet(se, 
+ #            design = ~ treatment)
+
+# some values in assay are not integers error
+# for automation add if statement to check for integers, then replace if required.
+
+raw_counts <- assays(se)$counts
+integer_counts <- (round(raw_counts))
+assays(se)$counts <- integer_counts
+
+# retry
+
+dds <- DESeqDataSet(se, 
+             design = ~ treatment)
+
+# run analysis 
+
+dds <- DESeq(dds)
+```
+
+```{r}
+
+dds_results <- results(dds)
+# Create a dataframe for plotting without genes with padj = NA
+ddsplot <- data.frame(dds_results) %>% filter(!is.na(padj))
+
+# Create column specifying if gene is significantly differentially expressed
+ddsplot <- ddsplot %>% 
+  mutate(signif = if_else(padj < 0.1, "padj < 0.1", "Not significant"))
+
+# Create a volcano plot
+ddsplot %>% 
+  ggplot(aes(x = log2FoldChange, y = -log10(padj), color = signif)) +
+  geom_point() + 
+  labs(x = "log2 fold change", 
+         y = "-log10 adjusted p-value", 
+         title = "volcano plot L2FC genes") +
+  theme_bw() +
+  
+  # Change the legend text and the colours
+  scale_colour_manual(values = c("grey", "darkgreen"), name = "Significance")
+```
+
+```{r genenames}
+httr::set_config(httr::config(ssl_verifypeer = FALSE)) 
+# this seems to fix ensembl SSL errors
+# https://github.com/grimbough/biomaRt/issues/31
+
+# Order by log2FoldChange and select top 20 genes
+ddsplot_down <- 
+  ddsplot[order(ddsplot$log2FoldChange),] %>% head(n = 20)
+ddsplot_up <- 
+  ddsplot[order(-ddsplot$log2FoldChange),] %>% head(n = 20)
+
+ddsplot_combined <- rbind(ddsplot_down, ddsplot_up)
+
+# Get list of Ensembl IDs
+ensembl_transcript_ids <- rownames(ddsplot_combined)
+
+mart <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+
+genes <- getBM(attributes = c("ensembl_transcript_id", "external_gene_name", "ensembl_gene_id", "gene_biotype"),
+                                 filters = "ensembl_transcript_id",
+                                 values = ensembl_transcript_ids, 
+                                 mart = mart)
+
+head(genes)
+
+# Add gene info to ddsplot combined object
+rownames(genes) <- genes$ensembl_transcript_id
+ddsplot_combined_gen <- merge(ddsplot_combined, genes, by.x = "row.names", by.y = "ensembl_transcript_id", all.x = TRUE)
+
+head(ddsplot_combined_gen)
+
+# Create unique row names by combining gene name with transcript ID
+# non-unique names throw out errors
+
+ddsplot_combined_gen$unique_name <- ifelse(
+    is.na(ddsplot_combined_gen$external_gene_name),
+    ddsplot_combined_gen$Row.names,
+    paste(ddsplot_combined_gen$external_gene_name, ddsplot_combined_gen$Row.names, sep = "_")
+)
+
+rownames(ddsplot_combined_gen) <- 
+  ddsplot_combined_gen$unique_name
+
+ddsplot_combined_gen <-
+  ddsplot_combined_gen[, -which(names(ddsplot_combined_gen) %in% c("Row.names", "ensembl_gene_id", "unique_name"))]
+
+# Create filter for difference in regulation
+ddsplot_combined_gen <- ddsplot_combined_gen %>%
+  mutate(regulation = case_when(
+    log2FoldChange > 0 ~ "Upregulated",
+    log2FoldChange <= 0 ~ "Downregulated"
+  ))
+ddsplot_combined_gen_tibble <-
+  ddsplot_combined_gen %>%
+  as_tibble() %>%
+  dplyr::select("external_gene_name",
+         "gene_biotype",
+         "regulation",
+         "log2FoldChange",
+         "signif") %>% arrange(-log2FoldChange)
+print(ddsplot_combined_gen_tibble, n = 40)
+
+# Plot using ggplot2
+ggplot(ddsplot_combined_gen, 
+       aes(x = reorder(rownames(ddsplot_combined_gen), log2FoldChange),
+           y = log2FoldChange, fill = regulation)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    labs(x = "gene", 
+         y = "log2 Fold Change", 
+         title = "Top 20 Up- and Downregulated Genes") +
+  theme_bw()
+```
+
+```{r heatmap}
+rld <- rlog(dds,
+            blind = FALSE)
+# Transpose count matrix and calculate distances using dist()
+sampleDists <- assay(rld) %>% t() %>% dist()
+
+# Convert distance dataframe to matrix
+sampleDistMatrix <- as.matrix(sampleDists)
+
+# Choose continuous palette from RColorBrewer
+colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
+
+# Plot sample distance heatmap with ComplexHeatmap
+heatmap(sampleDistMatrix, cluster_rows = F, cluster_columns = F,
+         col = colors)
+```

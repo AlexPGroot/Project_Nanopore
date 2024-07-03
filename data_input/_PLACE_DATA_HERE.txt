@@ -1,0 +1,19 @@
+# Place loose nanopore data files without folders here in .fastq.gz/.fastq format
+# Workflow is compatible with fastq.gz files and this format is preferred to save space.
+
+# SGNex data procured from SGNex tutorial data:
+
+http://sg-nex-data.s3.amazonaws.com/data/data_tutorial/fastq/A549_directRNA_sample1.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/data_tutorial/fastq/A549_directRNA_sample2.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/data_tutorial/fastq/A549_directRNA_sample3.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/data_tutorial/fastq/HepG2_directRNA_sample1.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/data_tutorial/fastq/HepG2_directRNA_sample2.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/data_tutorial/fastq/HepG2_directRNA_sample3.fastq.gz
+
+http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_HepG2_cDNA_replicate1_run4/SGNex_HepG2_cDNA_replicate1_run4.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_HepG2_cDNAStranded_replicate4_run3/SGNex_HepG2_cDNAStranded_replicate4_run3.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_HepG2_cDNAStranded_replicate5_run4/SGNex_HepG2_cDNAStranded_replicate5_run4.fastq.gz
+
+http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_MCF7_cDNA_replicate1_run3/SGNex_MCF7_cDNA_replicate1_run3.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_MCF7_cDNAStranded_replicate2_run1/SGNex_MCF7_cDNAStranded_replicate2_run1.fastq.gz
+http://sg-nex-data.s3.amazonaws.com/data/sequencing_data_ont/fastq/SGNex_MCF7_cDNAStranded_replicate3_run2/SGNex_MCF7_cDNAStranded_replicate3_run2.fastq.gz

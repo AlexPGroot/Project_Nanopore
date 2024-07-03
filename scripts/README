@@ -1,0 +1,33 @@
+############################
+        INTRODUCTION
+############################
+
+Contains scripts for executing workflow.
+Scripts are numbered in order of execution.
+Scripts whose numbers are followed up by an "x" e.g. "02x_minimap2.sh" are updated scripts.
+
+############################
+           FILES
+############################
+
+# README
+The file you are currently viewing
+
+# 00_bam_to_sam_sgnex.sh
+Conversion script to convert SGNex bam files to sam files for troubleshooting.
+
+01_fastqc.sh
+Script to perform fastqc analysis
+
+02_minimap2.sh
+Script to perform minimap2 of fastq files to .sam files
+
+02x_minimap2.sh
+Script to mass perform minimap2 of fastq files to .sam files.
+Entirety of data_input is used as input with output being in /results/sam/
+
+03_mapq.R
+
+04_sam_to_bam.sh
+
+05_bambu.R

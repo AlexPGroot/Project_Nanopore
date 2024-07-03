@@ -1,0 +1,24 @@
+filterSGNex_HepG2_cDNA_replicate1_run4.bam
+filterSGNex_MCF7_cDNA_replicate1_run3.bam
+filterc3a_23042023.bam
+filtermcf7_101315-06-2022.bam
+filtermcf7_11-01-2023.bam
+
+Error in env[[as.character(i)]] <- value : 
+  wrong args for environment subassignment
+In addition: Warning messages:
+1: Returning more (or less) than 1 row per `summarise()` group was deprecated in dplyr 1.1.0.
+ℹ Please use `reframe()` instead.
+ℹ When switching from `summarise()` to `reframe()`, remember that `reframe()` always returns an ungrouped data frame
+  and adjust accordingly.
+ℹ The deprecated feature was likely used in the bambu package.
+  Please report the issue to the authors.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated. 
+2: In parallel::mccollect(wait = FALSE, timeout = 1) :
+  1 parallel job did not deliver a result
+
+error when using in combination with any of the following:
+filterSGNex_MCF7_cDNAStranded_replicate3_run2.bam
+filterSGNex_HepG2_cDNAStranded_replicate4_run3.bam
+filterSGNex_HepG2_cDNAStranded_replicate5_run4.bam

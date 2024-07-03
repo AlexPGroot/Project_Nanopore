@@ -1,0 +1,7 @@
+chromosome_name,chromosome_length_with_N,chromosome_length_without_N
+3 dna:chromosome chromosome:GRCh38:3:1:198295559:1 REF,198295559,198100135
+6 dna:chromosome chromosome:GRCh38:6:1:170805979:1 REF,170805979,170078522
+8 dna:chromosome chromosome:GRCh38:8:1:145138636:1 REF,145138636,144768136
+13 dna:chromosome chromosome:GRCh38:13:1:114364328:1 REF,114364328,97983125
+17 dna:chromosome chromosome:GRCh38:17:1:83257441:1 REF,83257441,82920204
+22 dna:chromosome chromosome:GRCh38:22:1:50818468:1 REF,50818468,39159777
